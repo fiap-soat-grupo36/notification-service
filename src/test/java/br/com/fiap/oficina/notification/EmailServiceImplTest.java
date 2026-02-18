@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Map;
@@ -28,7 +28,7 @@ class EmailServiceImplTest {
     private JavaMailSender mailSender;
 
     @Mock
-    private TemplateEngine templateEngine;
+    private ITemplateEngine templateEngine;
 
     @Mock
     private MimeMessage mimeMessage;
