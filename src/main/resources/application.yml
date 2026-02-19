@@ -2,6 +2,12 @@ spring:
   application:
     name: notification-service
 
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
@@ -30,6 +36,15 @@ app:
   notification:
     email:
       sender: ${EMAIL_SENDER:oficina.fiap@gmail.com}
+  messaging:
+    customer-created:
+      queue: ${CUSTOMER_CREATED_QUEUE:notification.customer-created}
+      exchange: ${CUSTOMER_CREATED_EXCHANGE:oficina.customer.events}
+      routing-key: ${CUSTOMER_CREATED_ROUTING_KEY:customer.created}
+    work-order-created:
+      queue: ${WORK_ORDER_CREATED_QUEUE:notification.work-order-created}
+      exchange: ${WORK_ORDER_CREATED_EXCHANGE:oficina.work-order.events}
+      routing-key: ${WORK_ORDER_CREATED_ROUTING_KEY:work-order.created}
 
 management:
   endpoints:
