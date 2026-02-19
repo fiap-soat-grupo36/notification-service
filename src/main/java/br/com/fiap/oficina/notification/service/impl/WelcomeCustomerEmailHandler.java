@@ -15,6 +15,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class WelcomeCustomerEmailHandler implements CustomerCreatedEventHandler {
 
+    private static final String EMAIL_SUBJECT = "Conta criada com sucesso";
+    private static final String EMAIL_TEMPLATE = "cliente-cadastrado";
+
     private final EmailService emailService;
 
     @Override
@@ -31,10 +34,13 @@ public class WelcomeCustomerEmailHandler implements CustomerCreatedEventHandler 
                 "customerId", Objects.requireNonNullElse(event.customerId(), 0L)
         );
 
+        log.info("Preparando email de boas-vindas. customerId={}, to={}, template={}",
+                event.customerId(), email, EMAIL_TEMPLATE);
+
         emailService.enviarEmail(
                 email,
-                "Conta criada com sucesso",
-                "cliente-cadastrado",
+                EMAIL_SUBJECT,
+                EMAIL_TEMPLATE,
                 variaveis
         );
     }

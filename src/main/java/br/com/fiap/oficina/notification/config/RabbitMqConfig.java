@@ -34,6 +34,23 @@ public class RabbitMqConfig {
     }
 
     @Bean
+    public Queue workOrderCreatedQueue(@Value("${app.messaging.work-order-created.queue}") String queueName) {
+        return QueueBuilder.durable(queueName).build();
+    }
+
+    @Bean
+    public DirectExchange workOrderEventsExchange(@Value("${app.messaging.work-order-created.exchange}") String exchangeName) {
+        return ExchangeBuilder.directExchange(exchangeName).durable(true).build();
+    }
+
+    @Bean
+    public Binding workOrderCreatedBinding(Queue workOrderCreatedQueue,
+                                           DirectExchange workOrderEventsExchange,
+                                           @Value("${app.messaging.work-order-created.routing-key}") String routingKey) {
+        return BindingBuilder.bind(workOrderCreatedQueue).to(workOrderEventsExchange).with(routingKey);
+    }
+
+    @Bean
     public MessageConverter rabbitMessageConverter(ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
