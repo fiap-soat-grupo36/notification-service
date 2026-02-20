@@ -44,34 +44,32 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  verify-infrastructure:
-    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
-    with:
-      workspace: dev
-      environment: dev
-      working_directory: ./infra
-      auto_apply: false
-      localstack_pod: fiap
-    secrets:
-      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+  #verify-infrastructure:
+  #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+  #  with:
+  #    workspace: dev
+  #    environment: dev
+  #    working_directory: ./infra
+  #    auto_apply: false
+  #    localstack_pod: fiap
+  #  secrets:
+  #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+#
+  #deploy-dev:
+  #  needs: [docker,verify-infrastructure]
+  #  if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+  #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+  #  with:
+  #    workspace: dev
+  #    environment: dev
+  #    working_directory: ./infra
+  #    auto_apply: true
+  #    localstack_pod: fiap
+  #  secrets:
+  #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
 
-  deploy-dev:
-    needs: [docker,verify-infrastructure]
-    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
-    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
-    with:
-      workspace: dev
-      environment: dev
-      working_directory: ./infra
-      auto_apply: true
-      localstack_pod: fiap
-    secrets:
-      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
-
-
-  # 5. Criar PR Automático para Main (Produção)
   create-pr-to-main:
-    needs: deploy-dev
+    #needs: deploy-dev
     uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-create-pr.yml@main
     with:
       base: main
