@@ -41,9 +41,7 @@ jobs:
       tag_strategy: 'custom'
       custom_tags: '["latest", "stable", "${{ github.sha }}"]'
       push_images: true
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    secrets: inherit
 
   #verify-infrastructure:
   #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main

@@ -40,9 +40,7 @@ jobs:
       registry_namespace: 'fiapsoatgrupo36'
       tag_strategy: 'both'
       push_images: true
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    secrets: inherit
 
   #verify-infrastructure:
   #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
