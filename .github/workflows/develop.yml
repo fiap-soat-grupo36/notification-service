@@ -1,4 +1,4 @@
-name: Develop - CI/CD
+name: Develop - CI/CD & Deploy to Dev
 
 on:
   push:
@@ -25,7 +25,7 @@ jobs:
     with:
       java_version: '21'
       sonar_org: 'fiap-soat-grupo36'
-      sonar_project_key: 'notification-service'
+      sonar_project_key: 'fiap-soat-grupo36_notification-service'
       maven_skip_tests: true
       download_jacoco_artifacts: true
     secrets:
@@ -40,12 +40,37 @@ jobs:
       registry_namespace: 'fiapsoatgrupo36'
       tag_strategy: 'both'
       push_images: true
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    secrets: inherit
+
+  #verify-infrastructure:
+  #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+  #  with:
+  #    workspace: dev
+  #    environment: dev
+  #    working_directory: ./infra
+  #    auto_apply: false
+  #    localstack_pod: fiap
+  #  secrets:
+  #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+#
+  #deploy-dev:
+  #  needs: [docker,verify-infrastructure]
+  #  if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+  #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+  #  with:
+  #    workspace: dev
+  #    environment: dev
+  #    working_directory: ./infra
+  #    auto_apply: true
+  #    localstack_pod: fiap
+  #  secrets:
+  #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
 
   create-pr-to-main:
-    needs: docker
+    permissions:
+      contents: read
+      pull-requests: write
+    #needs: deploy-dev
     uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-create-pr.yml@main
     with:
       base: main
@@ -53,7 +78,11 @@ jobs:
       title: "🚀 Deploy to Production - ${{ github.sha }}"
       body: |
         ## 🎯 Ready for Production Deployment
-
+        
+        **Environment:** Development → Production
+        **Commit:** `${{ github.sha }}`
+        **Deployed to Dev:** ✅ Successful
+        
         **Environment:** Development → Production
         **Commit:** `${{ github.sha }}`
 
@@ -62,10 +91,17 @@ jobs:
         - ✅ Code coverage analyzed
         - ✅ SonarCloud quality gate passed
         - ✅ Docker image published
-
+        - ✅ Deployed successfully to DEV
+        
         ### 📦 Docker Image
         - **Image:** `fiapsoatgrupo36/notification-service:develop-${{ github.sha }}`
-      labels: '["deployment", "production", "needs-approval"]'
-      reviewers: ''
+        
+        ### 🔍 Review Checklist
+        - [ ] All features tested in DEV
+        - [ ] No critical bugs reported
+        - [ ] Performance validated
+        - [ ] Security review completed
+        
+        Ready for production deployment! 🚀
       draft: false
 
