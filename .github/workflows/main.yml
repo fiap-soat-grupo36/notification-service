@@ -1,4 +1,4 @@
-name: Main - CI/CD
+name: Main - CI/CD & Deploy to Production
 
 on:
   push:
@@ -44,3 +44,27 @@ jobs:
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
+  verify-infrastructure:
+    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+    with:
+      workspace: prod
+      environment: prod
+      working_directory: ./infra
+      auto_apply: false
+      localstack_pod: fiap
+    secrets:
+      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+
+  deploy-production:
+    needs: [docker,verify-infrastructure]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+    with:
+      workspace: prod
+      environment: prod
+      working_directory: ./infra
+      auto_apply: true
+      localstack_pod: fiap
+    secrets:
+      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}

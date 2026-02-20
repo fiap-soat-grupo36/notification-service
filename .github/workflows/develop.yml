@@ -1,4 +1,4 @@
-name: Develop - CI/CD
+name: Develop - CI/CD & Deploy to Dev
 
 on:
   push:
@@ -44,8 +44,35 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
+  verify-infrastructure:
+    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+    with:
+      workspace: dev
+      environment: dev
+      working_directory: ./infra
+      auto_apply: false
+      localstack_pod: fiap
+    secrets:
+      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+
+  # 4. Deploy to Dev Environment
+  deploy-dev:
+    needs: [docker,verify-infrastructure]
+    if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
+    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+    with:
+      workspace: dev
+      environment: dev
+      working_directory: ./infra
+      auto_apply: true
+      localstack_pod: fiap
+    secrets:
+      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+
+
+  # 5. Criar PR Automático para Main (Produção)
   create-pr-to-main:
-    needs: docker
+    needs: deploy-dev
     uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-create-pr.yml@main
     with:
       base: main
@@ -53,7 +80,11 @@ jobs:
       title: "🚀 Deploy to Production - ${{ github.sha }}"
       body: |
         ## 🎯 Ready for Production Deployment
-
+        
+        **Environment:** Development → Production
+        **Commit:** `${{ github.sha }}`
+        **Deployed to Dev:** ✅ Successful
+        
         **Environment:** Development → Production
         **Commit:** `${{ github.sha }}`
 
@@ -62,10 +93,17 @@ jobs:
         - ✅ Code coverage analyzed
         - ✅ SonarCloud quality gate passed
         - ✅ Docker image published
-
+        - ✅ Deployed successfully to DEV
+        
         ### 📦 Docker Image
-        - **Image:** `fiapsoatgrupo36/notification-service:develop-${{ github.sha }}`
-      labels: '["deployment", "production", "needs-approval"]'
-      reviewers: ''
+        - **Image:** `fiapsoatgrupo36/customer-service:develop-${{ github.sha }}`
+        
+        ### 🔍 Review Checklist
+        - [ ] All features tested in DEV
+        - [ ] No critical bugs reported
+        - [ ] Performance validated
+        - [ ] Security review completed
+        
+        Ready for production deployment! 🚀
       draft: false
 
