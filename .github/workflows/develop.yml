@@ -69,6 +69,9 @@ jobs:
   #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
 
   create-pr-to-main:
+    permissions:
+      contents: read
+      pull-requests: write
     #needs: deploy-dev
     uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-create-pr.yml@main
     with:
