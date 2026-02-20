@@ -19,6 +19,18 @@ jobs:
       upload_jacoco_reports: false
     secrets: inherit
 
+  sonar:
+    needs: build-and-test
+    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-sonar-java.yml@main
+    with:
+      java_version: '21'
+      sonar_org: 'fiap-soat-grupo36'
+      sonar_project_key: 'fiap-soat-grupo36_notification-service'
+      maven_skip_tests: true
+      download_jacoco_artifacts: true
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   # 2. Terraform Validate e Plan
   terraform-validation:
     needs: build-and-test

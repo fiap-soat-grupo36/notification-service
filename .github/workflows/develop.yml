@@ -25,7 +25,7 @@ jobs:
     with:
       java_version: '21'
       sonar_org: 'fiap-soat-grupo36'
-      sonar_project_key: 'notification-service'
+      sonar_project_key: 'fiap-soat-grupo36_notification-service'
       maven_skip_tests: true
       download_jacoco_artifacts: true
     secrets:
@@ -55,7 +55,6 @@ jobs:
     secrets:
       LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
 
-  # 4. Deploy to Dev Environment
   deploy-dev:
     needs: [docker,verify-infrastructure]
     if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
@@ -96,7 +95,7 @@ jobs:
         - ✅ Deployed successfully to DEV
         
         ### 📦 Docker Image
-        - **Image:** `fiapsoatgrupo36/customer-service:develop-${{ github.sha }}`
+        - **Image:** `fiapsoatgrupo36/notification-service:develop-${{ github.sha }}`
         
         ### 🔍 Review Checklist
         - [ ] All features tested in DEV
