@@ -25,7 +25,7 @@ jobs:
     with:
       java_version: '21'
       sonar_org: 'fiap-soat-grupo36'
-      sonar_project_key: 'notification-service'
+      sonar_project_key: 'fiap-soat-grupo36_notification-service'
       maven_skip_tests: true
       download_jacoco_artifacts: true
     secrets:
@@ -45,26 +45,26 @@ jobs:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  verify-infrastructure:
-    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
-    with:
-      workspace: prod
-      environment: prod
-      working_directory: ./infra
-      auto_apply: false
-      localstack_pod: fiap
-    secrets:
-      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
-
-  deploy-production:
-    needs: [docker,verify-infrastructure]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
-    with:
-      workspace: prod
-      environment: prod
-      working_directory: ./infra
-      auto_apply: true
-      localstack_pod: fiap
-    secrets:
-      LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+  #verify-infrastructure:
+  #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+  #  with:
+  #    workspace: prod
+  #    environment: prod
+  #    working_directory: ./infra
+  #    auto_apply: false
+  #    localstack_pod: fiap
+  #  secrets:
+  #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
+#
+  #deploy-production:
+  #  needs: [docker,verify-infrastructure]
+  #  if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  #  uses: fiap-soat-grupo36/reusable-actions/.github/workflows/_reusable-terraform.yml@main
+  #  with:
+  #    workspace: prod
+  #    environment: prod
+  #    working_directory: ./infra
+  #    auto_apply: true
+  #    localstack_pod: fiap
+  #  secrets:
+  #    LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
